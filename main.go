@@ -30,8 +30,6 @@ type TuneInPage struct {
 	ControlDataUrl string
 }
 
-
-
 func handler(ws *websocket.Conn) {
   wchan := make (chan string)
   wsocket.Add(ws, wchan)
