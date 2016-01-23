@@ -1,10 +1,10 @@
 package main
 
 import (
-      "fmt"
-      "net"
-      "math"
-      "time"
+	"fmt"
+	"math"
+	"net"
+	"time"
 )
 
 func getLocalIP() string {
@@ -23,10 +23,7 @@ func getLocalIP() string {
 	return ""
 }
 
-func calculateTimeDiff() int{
-  fmt.Println("calculation")
-  fmt.Println("song start time: ", songStartTime)
-  fmt.Println("length ...", songLength)
+func calculateTimeDiff() int {
 	diff := time.Now().Sub(songStartTime)
 	diff_time := int(math.Ceil(diff.Seconds()))
 	fmt.Println("song length: ", songLength)

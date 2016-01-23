@@ -66,7 +66,7 @@ $(function() {
 	ws.onmessage = function(e) {
 		$('#waitBeforeStart').hide();
     $('#songDetails').show();
-		console.log("Data recvd: " + e.data)
+		console.log("Audiio Data recvd: " + e.data)
 		audioCtx.decodeAudioData(e.data, onDecode);
 	}
 
@@ -78,8 +78,10 @@ $(function() {
 		$("#songName").html("")
 		$('#songName').append( jsonMsg.Name);
 		if ( jsonMsg.Command == "wait"){
+      $('#songDetails').hide();
 			$('#waiting_time').append( jsonMsg.Duration );
 		}else if( jsonMsg.Command == "play" ){
+      $('#songDetails').show();
 			$('#waiting_time').html("")
 			$('#waitBeforeStart').hide();
 		}

@@ -1,16 +1,15 @@
 package main
 
 import (
-      "os"
-      "golang.org/x/net/websocket"
-      "fmt"
-      "container/list"
+	"container/list"
+	"fmt"
+	"golang.org/x/net/websocket"
+	"os"
 )
 
-
 type WebsocketElement struct {
-	conn *websocket.Conn
-	ch chan string
+	conn     *websocket.Conn
+	ch       chan string
 	errCount int
 }
 
@@ -26,25 +25,30 @@ func (w *Websockets) Add(conn *websocket.Conn, ch chan string) {
 	w.ws.PushBack(WebsocketElement{conn: conn, ch: ch, errCount: 0})
 }
 
-
-func (w *Websockets) Write (buff []byte) {
+func (w *Websockets) Write(buff []byte) {
 	l := w.ws
 	fmt.Fprintf(os.Stderr, "Number of connections: %d\n", l.Len())
 	for e := l.Front(); e != nil; e = e.Next() {
 		wsElem := e.Value.(WebsocketElement)
 		err := websocket.Message.Send(wsElem.conn, buff)
+    remoteAddr := wsElem.conn.RemoteAddr().String()
 		if err != nil {
+      fmt.Fprintf(os.Stderr, "Error Sending data to %s[ErrCount:%d]: %s\n", remoteAddr, wsElem.errCount, err.Error());
+			wsElem.ch <- remoteAddr + ":" + err.Error()
 			l.Remove(e)
 		}
 	}
 }
 
-func (w *Websockets) WriteText (cntrl_msg ControlMsg){
+func (w *Websockets) WriteText(cntrl_msg ControlMsg) {
 	l := w.ws
 	for e := l.Front(); e != nil; e = e.Next() {
 		wsElem := e.Value.(WebsocketElement)
 		err := websocket.JSON.Send(wsElem.conn, cntrl_msg)
+    remoteAddr := wsElem.conn.RemoteAddr().String()
 		if err != nil {
+      fmt.Fprintf(os.Stderr, "Error Sending data to %s[ErrCount:%d]: %s\n", remoteAddr, wsElem.errCount, err.Error());
+			wsElem.ch <- remoteAddr + ":" + err.Error()
 			l.Remove(e)
 		}
 	}
