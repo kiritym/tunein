@@ -8,10 +8,16 @@ import (
       "html/template"
       "os"
       "net"
+      "time"
+      "math"
 )
 
 var PORT string
 var wsocket Websockets
+var wsCntrl Websockets
+var waiting_time int
+var songStartTime time.Time
+var songLength int
 
 func init() {
   const (
@@ -42,12 +48,31 @@ func getLocalIP() string {
 	return ""
 }
 
+func calculateTimeDiff() int{
+	diff := time.Now().Sub(songStartTime)
+	diff_time := int(math.Ceil(diff.Seconds()))
+	fmt.Println("song length: ", songLength)
+	waiting_time = songLength - diff_time
+	fmt.Println("waiting time: ", waiting_time)
+	return waiting_time
+}
+
 
 func handler(ws *websocket.Conn) {
   wchan := make (chan string)
   wsocket.Add(ws, wchan)
   <- wchan
 }
+
+func ctrlHandler(ws *websocket.Conn) {
+	wchan := make (chan string)
+	wsCntrl.Add(ws, wchan)
+  waiting_time = calculateTimeDiff()
+	cntrlmsg := ControlMsg{Name: "", Duration: waiting_time, Command: "wait"}
+	websocket.JSON.Send(ws, cntrlmsg)
+	<- wchan
+}
+
 
 func rootHandler(w http.ResponseWriter, r *http.Request){
   hostname := getLocalIP()
@@ -67,8 +92,10 @@ func main(){
   fmt.Println("Hello Tunein")
   flag.Parse()
   wsocket.Init()
+  wsCntrl.Init()
   go playRadio(wsocket)
   http.Handle("/radio", websocket.Handler(handler))
+  http.Handle("/ctrl", websocket.Handler(ctrlHandler))
   http.HandleFunc("/", rootHandler)
   err := http.ListenAndServe(":" + PORT, nil)
   if err != nil {

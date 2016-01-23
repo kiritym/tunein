@@ -64,7 +64,7 @@ $(function() {
 
 	ws.onmessage = function(e) {
 		$('#waitBeforeStart').hide();
-
+    $('#songDetails').show();
 		console.log("Data recvd: " + e.data)
 		audioCtx.decodeAudioData(e.data, onDecode);
 	}

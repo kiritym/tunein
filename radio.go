@@ -11,6 +11,12 @@ import (
         "strconv"
   )
 
+type ControlMsg struct{
+	Name string
+	Duration int
+	Command	string
+}
+
 func playList() []string{
   var songList []string
   files, _ := ioutil.ReadDir("music")
