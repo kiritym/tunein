@@ -35,7 +35,8 @@ type TuneInPage struct {
 func handler(ws *websocket.Conn) {
 	wchan := make(chan string)
 	wsocket.Add(ws, wchan)
-	<-wchan
+  msg := <- wchan
+	fmt.Fprintf(os.Stdout, "Music Go Routine exited: %s\n", msg)
 }
 
 func ctrlHandler(ws *websocket.Conn) {
@@ -45,7 +46,8 @@ func ctrlHandler(ws *websocket.Conn) {
 	fmt.Println("waiting time: ", waiting_time)
 	cntrlmsg := ControlMsg{Name: "", Duration: waiting_time, Command: "wait"}
 	websocket.JSON.Send(ws, cntrlmsg)
-	<-wchan
+  msg := <- wchan
+	fmt.Fprintf(os.Stdout, "Ctrl Go Routine exited: %s\n", msg)
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {

@@ -10,11 +10,10 @@
 	<script>
 
 $(function() {
-	$("#songDetails").hide()
+	$("#songDetails").hide();
 	var audioCtx;
 	var source;
 	var sourceLength;
-	console.log("audio data received:")
 	var ws = new WebSocket({{.MusicUrl}});
 	ws.binaryType = 'arraybuffer';
   var wsText = new WebSocket({{.ControlDataUrl}});
@@ -66,7 +65,7 @@ $(function() {
 	ws.onmessage = function(e) {
 		$('#waitBeforeStart').hide();
     $('#songDetails').show();
-		console.log("Audiio Data recvd: " + e.data)
+		console.log("Audio Data recvd: " + e.data)
 		audioCtx.decodeAudioData(e.data, onDecode);
 	}
 
@@ -84,7 +83,11 @@ $(function() {
       $('#songDetails').show();
 			$('#waiting_time').html("")
 			$('#waitBeforeStart').hide();
+      if( $('#duration').html() === "" ) {
+        $('#songDetails').hide();
+      }
 		}
+
 	}
 
   var next_song_duration = function(){
