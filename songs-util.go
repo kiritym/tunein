@@ -9,10 +9,6 @@ import (
         "os"
 )
 
-
-
-
-
 func playList() []string{
   var songList []string
   files, _ := ioutil.ReadDir("music")
@@ -32,6 +28,6 @@ func findSongDuration(songName string) int{
     if err != nil {
 			fmt.Fprintf(os.Stderr, "Error in script command %s\n", err.Error())
     }
-    duration, _ := strconv.Atoi(strings.TrimSpace(string(out)))
-		return duration
+    songLength, _ = strconv.Atoi(strings.TrimSpace(string(out)))
+		return songLength
 }

@@ -24,6 +24,9 @@ func getLocalIP() string {
 }
 
 func calculateTimeDiff() int{
+  fmt.Println("calculation")
+  fmt.Println("song start time: ", songStartTime)
+  fmt.Println("length ...", songLength)
 	diff := time.Now().Sub(songStartTime)
 	diff_time := int(math.Ceil(diff.Seconds()))
 	fmt.Println("song length: ", songLength)

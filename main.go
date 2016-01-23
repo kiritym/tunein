@@ -10,12 +10,14 @@ import (
       "time"
 )
 
-var PORT string
-var wsocket Websockets
-var wsCntrl Websockets
-var waiting_time int
-var songStartTime time.Time
-var songLength int
+var (
+      PORT string
+      wsocket Websockets
+      wsCntrl Websockets
+      waiting_time int
+      songStartTime time.Time
+      songLength int
+    )
 
 func init() {
   const (
@@ -40,6 +42,7 @@ func ctrlHandler(ws *websocket.Conn) {
 	wchan := make (chan string)
 	wsCntrl.Add(ws, wchan)
   waiting_time = calculateTimeDiff()
+  fmt.Println("waiting time: ", waiting_time)
 	cntrlmsg := ControlMsg{Name: "", Duration: waiting_time, Command: "wait"}
 	websocket.JSON.Send(ws, cntrlmsg)
 	<- wchan
@@ -65,7 +68,7 @@ func main(){
   flag.Parse()
   wsocket.Init()
   wsCntrl.Init()
-  go playRadio(wsocket)
+  go playRadio(wsocket, wsCntrl)
   http.Handle("/radio", websocket.Handler(handler))
   http.Handle("/ctrl", websocket.Handler(ctrlHandler))
   http.HandleFunc("/", rootHandler)
