@@ -14,7 +14,7 @@ func playList() []string {
 	files, _ := ioutil.ReadDir("music")
 	i := 0
 	for _, f := range files {
-		if strings.Contains(f.Name(), ".mp3") {
+		if (strings.Contains(f.Name(), ".ogg") || strings.Contains(f.Name(), ".mp3")) {
 			fname := "music/" + f.Name()
 			songList = append(songList, fname)
 		}
