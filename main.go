@@ -7,6 +7,7 @@ import (
       "golang.org/x/net/websocket"
       "html/template"
       "os"
+      "net"
 )
 
 var PORT string
@@ -25,6 +26,23 @@ type TuneInPage struct {
 	ControlDataUrl string
 }
 
+func getLocalIP() string {
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		return ""
+	}
+	for _, address := range addrs {
+		// check the address type and if it is not a loopback the display it
+		if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+			if ipnet.IP.To4() != nil {
+				return ipnet.IP.String()
+			}
+		}
+	}
+	return ""
+}
+
+
 func handler(ws *websocket.Conn) {
   wchan := make (chan string)
   wsocket.Add(ws, wchan)
@@ -32,8 +50,9 @@ func handler(ws *websocket.Conn) {
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request){
-  musicUrl := "ws://" + "localhost" + ":" + PORT + "/radio"
-	ctrlDataUrl := "ws://" + "localhost" + ":" + PORT + "/ctrl"
+  hostname := getLocalIP()
+  musicUrl := "ws://" + hostname + ":" + PORT + "/radio"
+	ctrlDataUrl := "ws://" + hostname + ":" + PORT + "/ctrl"
 
 	t, err := template.ParseFiles("tmpl/index.tmpl")
 	if err != nil {
@@ -49,7 +68,7 @@ func main(){
   flag.Parse()
   wsocket.Init()
   go playRadio(wsocket)
-  http.Handle("/tunein", websocket.Handler(handler))
+  http.Handle("/radio", websocket.Handler(handler))
   http.HandleFunc("/", rootHandler)
   err := http.ListenAndServe(":" + PORT, nil)
   if err != nil {

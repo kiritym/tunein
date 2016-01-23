@@ -7,6 +7,8 @@ import (
         "io/ioutil"
         "fmt"
         "os"
+        "os/exec"
+        "strconv"
   )
 
 func playList() []string{
@@ -24,8 +26,12 @@ func playList() []string{
 }
 
 func findSongDuration(songName string) int{
-  //TODO - using "ffmpeg" for each song calculate the song length in sec
-  return 10
+  out, err := exec.Command("./script/find_song_duration.sh", songName).Output()
+    if err != nil {
+			fmt.Fprintf(os.Stderr, "Error in script command %s\n", err.Error())
+    }
+    duration, _ := strconv.Atoi(strings.TrimSpace(string(out)))
+		return duration
 }
 
 func copy(source io.Reader, wsocket Websockets, size int64, songName string) {
@@ -57,6 +63,7 @@ func playRadio(wsocket Websockets){
   	playList := playList()
   	for _, fileName := range playList {
   		songlength := findSongDuration(fileName)
+      fmt.Println(songlength)
   		playFile(fileName, wsocket, songlength)
   		time.Sleep( time.Duration(songlength) * time.Second)
   	}

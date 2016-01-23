@@ -4,9 +4,93 @@
 	<meta charset="UTF-8" />
 	<title>Radio application with websockets</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<script>
 
+$(function() {
+	$("#songDetails").hide()
+	var audioCtx;
+	var source;
+	var sourceLength;
+	console.log("audio data received:")
+	var ws = new WebSocket({{.MusicUrl}});
+	ws.binaryType = 'arraybuffer';
+	try {
+		window.AudioContext = window.AudioContext || window.webkitAudioContext;
+		audioCtx = new AudioContext();
+	} catch(e) {
+	    alert('Web Audio API is not supported in this browser');
+	}
+
+
+	var audioBufferSources = []
+	var audioBufferPresent = 0
+
+	function onDecode(buffer) {
+		console.log("Audio Decoded")
+		source = audioCtx.createBufferSource();
+		myBuffer = buffer;
+		songLength = buffer.duration;
+		source.buffer = myBuffer;
+
+		duration = Math.ceil(songLength)
+		console.log("duration: ", duration);
+		$("#duration").html("");
+		$('#duration').append( duration);
+
+		source.connect(audioCtx.destination);
+		source.loop = false;
+
+		source.onended = function() {
+			audioBufferSources.shift()
+			if (audioBufferSources.length > 0) {
+				audioBufferSources[0].start(0)
+			} else {
+				audioBufferPresent = 0
+			}
+			console.log("Started Next Buffer")
+		}
+
+		audioBufferSources.push(source)
+		console.log("Current Pending Buffers: " + audioBufferSources.length)
+		if (audioBufferPresent == 0) {
+			audioBufferPresent = 1;
+			console.log("Playing first buffer");
+			audioBufferSources[0].start(0)
+		}
+	}
+
+	ws.onmessage = function(e) {
+		$('#waitBeforeStart').hide();
+
+		console.log("Data recvd: " + e.data)
+		audioCtx.decodeAudioData(e.data, onDecode);
+	}
+
+});
+
+
+	</script>
 </head>
 <body>
-	<h3>Tune In </h3>
+	<div class="col-md-12 text-center">
+      <h2>TuneIn</h2>
+			<span class="glyphicon glyphicon-headphones" style="font-size:65px"></span>
+			<div id="waitBeforeStart">
+				<h4>Welcome! You will be tuned in to the radio station in</h4>
+				<div id="waiting_time"></div>second(s)
+				<br>
+				<br>
+				<i class="fa fa-cog fa-spin" style="font-size:75px"></i>
+			</div>
+  		<div id="songDetails">
+  			<h4>Now Playing:</h4>
+  			<div id="songName"></div>
+  			<h4>Time remaining for the next Song:</h4>
+  			<div id="duration"></div> second(s)
+  		</div>
+	</div>
 </body>
 </html>
