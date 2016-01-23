@@ -45,6 +45,8 @@ func copy(source io.Reader, wsocket Websockets, size int64, songName string) {
 	n, _ := io.ReadFull(source, content)
 	fmt.Println("reader size: ", n)
 	wsocket.Write(content)
+  msg := ControlMsg{Name: songName, Duration: 0, Command: "play"}
+	wsCntrl.WriteText(msg)
 }
 
 func playFile(fileName string, wsocket Websockets, songLength int){

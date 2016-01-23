@@ -17,6 +17,7 @@ $(function() {
 	console.log("audio data received:")
 	var ws = new WebSocket({{.MusicUrl}});
 	ws.binaryType = 'arraybuffer';
+  var wsText = new WebSocket({{.ControlDataUrl}});
 	try {
 		window.AudioContext = window.AudioContext || window.webkitAudioContext;
 		audioCtx = new AudioContext();
@@ -68,6 +69,44 @@ $(function() {
 		console.log("Data recvd: " + e.data)
 		audioCtx.decodeAudioData(e.data, onDecode);
 	}
+
+  wsText.onmessage = function(e) {
+		console.log("Text Data recvd: " + e.data)
+		var jsonMsg = JSON.parse(e.data);
+		console.log("name: " + jsonMsg.Name);
+		console.log("time left: " + jsonMsg.Duration);
+		$("#songName").html("")
+		$('#songName').append( jsonMsg.Name);
+		if ( jsonMsg.Command == "wait"){
+			$('#waiting_time').append( jsonMsg.Duration );
+		}else if( jsonMsg.Command == "play" ){
+			$('#waiting_time').html("")
+			$('#waitBeforeStart').hide();
+		}
+	}
+
+  var next_song_duration = function(){
+          var timeLeft = $("#duration").html();
+          if (eval(timeLeft) == 0) {
+                  $("#duration").html("")
+          } else {
+                  $("#duration").html(eval(timeLeft)- eval(1));
+          }
+  }
+
+  var waiting_for_start = function(){
+          var waitTime = $("#waiting_time").html();
+          if (eval(waitTime) == 0) {
+            $("#waiting_time").html("")
+          } else {
+            $("#waiting_time").html(eval(waitTime)- eval(1));
+          }
+  }
+
+  setInterval(function(){
+    waiting_for_start();
+    next_song_duration();
+  },1000);
 
 });
 

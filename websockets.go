@@ -38,3 +38,14 @@ func (w *Websockets) Write (buff []byte) {
 		}
 	}
 }
+
+func (w *Websockets) WriteText (cntrl_msg ControlMsg){
+	l := w.ws
+	for e := l.Front(); e != nil; e = e.Next() {
+		wsElem := e.Value.(WebsocketElement)
+		err := websocket.JSON.Send(wsElem.conn, cntrl_msg)
+		if err != nil {
+			l.Remove(e)
+		}
+	}
+}

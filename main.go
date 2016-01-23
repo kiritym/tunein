@@ -7,9 +7,7 @@ import (
       "golang.org/x/net/websocket"
       "html/template"
       "os"
-      "net"
       "time"
-      "math"
 )
 
 var PORT string
@@ -32,30 +30,6 @@ type TuneInPage struct {
 	ControlDataUrl string
 }
 
-func getLocalIP() string {
-	addrs, err := net.InterfaceAddrs()
-	if err != nil {
-		return ""
-	}
-	for _, address := range addrs {
-		// check the address type and if it is not a loopback the display it
-		if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
-			if ipnet.IP.To4() != nil {
-				return ipnet.IP.String()
-			}
-		}
-	}
-	return ""
-}
-
-func calculateTimeDiff() int{
-	diff := time.Now().Sub(songStartTime)
-	diff_time := int(math.Ceil(diff.Seconds()))
-	fmt.Println("song length: ", songLength)
-	waiting_time = songLength - diff_time
-	fmt.Println("waiting time: ", waiting_time)
-	return waiting_time
-}
 
 
 func handler(ws *websocket.Conn) {
