@@ -10,6 +10,11 @@ After configuring the playlist and running the application, user can share the a
 
 
 ## Usage
+- You can place your playlist in `music` folder of the source code.
+- Build the code
+- Run the application
+- Open the browser and wait for the tuning time. Once tuning is done you can start listening to your favorite music.
+- You can share the link to your friends so that they can also enjoy your playlist at the same time.
 
 
 
