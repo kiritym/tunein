@@ -48,6 +48,7 @@ func main(){
   fmt.Println("Hello Tunein")
   flag.Parse()
   wsocket.Init()
+  go playRadio(wsocket)
   http.Handle("/tunein", websocket.Handler(handler))
   http.HandleFunc("/", rootHandler)
   err := http.ListenAndServe(":" + PORT, nil)
