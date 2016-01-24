@@ -8,7 +8,8 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <link href='https://fonts.googleapis.com/css?family=Jura:400,600' rel='stylesheet' type='text/css'>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 	<script>
 
 $(function() {
@@ -16,6 +17,7 @@ $(function() {
 	var audioCtx;
 	var source;
 	var sourceLength;
+
 	var ws = new WebSocket({{.MusicUrl}});
 	ws.binaryType = 'arraybuffer';
   var wsText = new WebSocket({{.ControlDataUrl}});
@@ -26,70 +28,47 @@ $(function() {
 	    alert('Web Audio API is not supported in this browser');
 	}
 
-
-	var audioBufferSources = []
-	var audioBufferPresent = 0
-
-	function onDecode(buffer) {
-		console.log("Audio Decoded")
-		source = audioCtx.createBufferSource();
-		myBuffer = buffer;
-		songLength = buffer.duration;
-		source.buffer = myBuffer;
-
-		duration = Math.ceil(songLength)
-		console.log("duration: ", duration);
-		$("#duration").html("");
-		$('#duration').append( duration);
-
-		source.connect(audioCtx.destination);
-		source.loop = false;
-
-		source.onended = function() {
-			audioBufferSources.shift()
-			if (audioBufferSources.length > 0) {
-				audioBufferSources[0].start(0)
-			} else {
-				audioBufferPresent = 0
-			}
-			console.log("Started Next Buffer")
-		}
-
-		audioBufferSources.push(source)
-		console.log("Current Pending Buffers: " + audioBufferSources.length)
-		if (audioBufferPresent == 0) {
-			audioBufferPresent = 1;
-			console.log("Playing first buffer");
-			audioBufferSources[0].start(0)
-		}
-	}
-
 	ws.onmessage = function(e) {
 		$('#waitBeforeStart').hide();
     $('#songDetails').show();
 		console.log("Audio Data recvd: " + e.data)
-		audioCtx.decodeAudioData(e.data, onDecode);
+    source = audioCtx.createBufferSource();
+		audioCtx.decodeAudioData(e.data, function(buffer) {
+			console.log("Audio Decoded")
+			myBuffer = buffer;
+			songLength = buffer.duration;
+			source.buffer = myBuffer;
+			duration = Math.ceil(songLength)
+			console.log("duration: ", duration);
+			$("#duration").html("");
+			$("#duration").append( duration);
+			source.connect(audioCtx.destination);
+			source.loop = false;
+			source.start(0);
+			});
 	}
   var wait_duration = 0
   wsText.onmessage = function(e) {
-		console.log("Text Data recvd: " + e.data)
-		var jsonMsg = JSON.parse(e.data);
-		console.log("name: " + jsonMsg.Name);
-		console.log("time left: " + jsonMsg.Duration);
-		$("#songName").html("")
-		$('#songName').append( jsonMsg.Name);
-		if ( jsonMsg.Command == "wait"){
-      $('#songDetails').hide();
-			$('#waiting_time').append( jsonMsg.Duration );
-      wait_duration = jsonMsg.Duration;
-		}else if( jsonMsg.Command == "play" ){
-      $('#songDetails').show();
-			$('#waiting_time').html("")
-			$('#waitBeforeStart').hide();
-      if( $('#duration').html() === "" ) {
-        $('#songDetails').hide();
-      }
-		}
+    		console.log("Text Data recvd: " + e.data)
+    		var jsonMsg = JSON.parse(e.data);
+    		console.log("name: " + jsonMsg.Name);
+    		console.log("time left: " + jsonMsg.Duration);
+    		$("#songName").html("")
+    		$('#songName').append( jsonMsg.Name);
+    		if ( jsonMsg.Command == "wait"){
+          $('#songDetails').hide();
+    			$('#waiting_time').append( jsonMsg.Duration );
+          wait_duration = jsonMsg.Duration;
+    		}
+        else if(jsonMsg.Command == "play"){
+          $('#songDetails').show();
+    			$('#waiting_time').html("")
+    			$('#waitBeforeStart').hide();
+    		}
+       else {
+         console.log("audio is nt received");
+          $('#waitBeforeStart').show();
+       }
 
 	}
 
@@ -127,7 +106,7 @@ $(function() {
   setInterval(function(){
     waiting_for_start();
     next_song_duration();
-    loading_progress();
+    //loading_progress();
   },1000);
 
 });
@@ -135,8 +114,34 @@ $(function() {
 
 	</script>
 </head>
+<style>
+body {
+      background-color: #00B4EF;
+      font-family: 'Jura';
+      font-style: normal;
+      font-weight: 600;
+      font-size: 20px;
+      color: white;
+    }
+h2 {
+    font-size: 60px;
+}
+h4 {
+    font-size: 20px;
+    color: black;
+}
+.vertical-center {
+  min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+  min-height: 100vh; /* These two lines are counted as one :-)       */
+  display: flex;
+  align-items: center;
+}
+#duration, #waiting_time {
+  font-size: 40px;
+}
+</style>
 <body>
-  <div class="container">
+  <div class="container vertical-center">
 	<div class="col-lg-12 text-center">
       <h2>TuneIn</h2>
 			<span class="glyphicon glyphicon-headphones" style="font-size:65px"></span>
@@ -146,15 +151,11 @@ $(function() {
 				<br>
 				<br>
 				<i class="fa fa-cog fa-spin" style="font-size:75px"></i>
-        <br>
-        <br>
-        <progress id="progressbar" value="0" max="100"></progress>
-        <span class="progress-value">0%</span>
 			</div>
   		<div id="songDetails">
-  			<h4>Now Playing:</h4>
+  			<h4>Now Playing</h4>
   			<div id="songName"></div>
-  			<h4>Time remaining for the next Song:</h4>
+  			<h4>Time remaining for the next Song</h4>
   			<div id="duration"></div> second(s)
   		</div>
 	</div>

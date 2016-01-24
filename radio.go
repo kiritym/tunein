@@ -28,6 +28,7 @@ func writeInSocket(source io.Reader, wsocket, wsCntrl Websockets, size int64, so
 //Open the song and write in socket
 func sendToSocket(fileName string, wsocket, wsCntrl Websockets, songLength int) {
 	songName := strings.SplitAfter(fileName, "/")[1]
+  songName = strings.Split(songName, ".")[0]
 	fmt.Printf("Name of the song: %s \n", songName)
 	f, err := os.Open(fileName)
 	if err != nil {
