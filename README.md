@@ -3,8 +3,8 @@ TuneIn is a personalized radio station where user can listen to her favorite son
 
 After configuring the playlist and running the application, user can share the application link to her friends to listen the same radio channel.
 
-![Tuning-image](https://github.com/gophergala2016/tunein/blob/master/scsreenshots/Tuning.png "Tuning")
-![Playing-image](https://github.com/gophergala2016/tunein/blob/master/scsreenshots/Playing.png "Playing")
+![Tuning-image](https://github.com/gophergala2016/tunein/blob/master/screenshots/Tuning.png "Tuning")
+![Playing-image](https://github.com/gophergala2016/tunein/blob/master/screenshots/Playing.png "Playing")
 
 
 ## Usage
