@@ -23,6 +23,12 @@ After configuring the playlist and running the application, user can share the a
   ```
   brew install ffmpeg
   ```
+- Clone the TuneIn Project
+
+  ```
+  git clone https://github.com/gophergala2016/tunein.git
+  ```
+  
 - Install golang websocket package
 
   ```
