@@ -2,11 +2,11 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	_ "fmt"
 	"golang.org/x/net/websocket"
 	"html/template"
 	"net/http"
-	"os"
+	_ "os"
 	"time"
 )
 
@@ -35,19 +35,19 @@ type TuneInPage struct {
 func handler(ws *websocket.Conn) {
 	wchan := make(chan string)
 	wsocket.Add(ws, wchan)
-  msg := <- wchan
-	fmt.Fprintf(os.Stdout, "Music Go Routine exited: %s\n", msg)
+	<-wchan
+	//fmt.Fprintf(os.Stdout, "Music Go Routine exited: %s\n", msg)
 }
 
 func ctrlHandler(ws *websocket.Conn) {
 	wchan := make(chan string)
 	wsCntrl.Add(ws, wchan)
 	waiting_time = calculateTimeDiff()
-	fmt.Println("waiting time: ", waiting_time)
+	//fmt.Println("waiting time: ", waiting_time)
 	cntrlmsg := ControlMsg{Name: "", Duration: waiting_time, Command: "wait"}
 	websocket.JSON.Send(ws, cntrlmsg)
-  msg := <- wchan
-	fmt.Fprintf(os.Stdout, "Ctrl Go Routine exited: %s\n", msg)
+	<-wchan
+	//fmt.Fprintf(os.Stdout, "Ctrl Go Routine exited: %s\n", msg)
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
@@ -57,7 +57,7 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 
 	t, err := template.ParseFiles("tmpl/index.tmpl")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to load template file: "+err.Error())
+		//fmt.Fprintf(os.Stderr, "Unable to load template file: "+err.Error())
 		return
 	}
 	p := TuneInPage{MusicUrl: musicUrl, ControlDataUrl: ctrlDataUrl}
@@ -65,7 +65,6 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	fmt.Println("Hello Tunein")
 	flag.Parse()
 	wsocket.Init()
 	wsCntrl.Init()

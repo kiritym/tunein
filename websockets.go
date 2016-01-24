@@ -27,15 +27,15 @@ func (w *Websockets) Add(conn *websocket.Conn, ch chan string) {
 
 func (w *Websockets) Write(buff []byte) {
 	l := w.ws
-  i := 0
+	i := 0
 	fmt.Fprintf(os.Stderr, "Number of connections: %d\n", l.Len())
 	for e := l.Front(); e != nil; e = e.Next() {
-    i++
+		i++
 		wsElem := e.Value.(WebsocketElement)
 		err := websocket.Message.Send(wsElem.conn, buff)
-    remoteAddr := wsElem.conn.RemoteAddr().String()
+		remoteAddr := wsElem.conn.RemoteAddr().String()
 		if err != nil {
-      fmt.Fprintf(os.Stderr, "%d :: Error Sending music data to %s[ErrCount:%d]: %s\n", i, remoteAddr, wsElem.errCount, err.Error());
+			fmt.Fprintf(os.Stderr, "%d :: Error Sending music data to %s[ErrCount:%d]: %s\n", i, remoteAddr, wsElem.errCount, err.Error())
 			//wsElem.ch <- remoteAddr + ":" + err.Error()
 			l.Remove(e)
 		}
@@ -47,9 +47,9 @@ func (w *Websockets) WriteText(cntrl_msg ControlMsg) {
 	for e := l.Front(); e != nil; e = e.Next() {
 		wsElem := e.Value.(WebsocketElement)
 		err := websocket.JSON.Send(wsElem.conn, cntrl_msg)
-    remoteAddr := wsElem.conn.RemoteAddr().String()
+		remoteAddr := wsElem.conn.RemoteAddr().String()
 		if err != nil {
-      fmt.Fprintf(os.Stderr, "Error Sending text data to %s[ErrCount:%d]: %s\n", remoteAddr, wsElem.errCount, err.Error());
+			fmt.Fprintf(os.Stderr, "Error Sending text data to %s[ErrCount:%d]: %s\n", remoteAddr, wsElem.errCount, err.Error())
 			//wsElem.ch <- remoteAddr + ":" + err.Error()
 			l.Remove(e)
 		}

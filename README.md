@@ -1,5 +1,5 @@
-# **Tunein**
-Tunein is a personalized radio station where user can listen to her favorite songs using HTML5 audio player over the web.
+# **TuneIn**
+TuneIn is a personalized radio station where user can listen to her favorite songs using HTML5 audio player over the web.
 
 After configuring the playlist and running the application, user can share the application link to her friends to listen the same radio channel.
 
@@ -56,5 +56,5 @@ After configuring the playlist and running the application, user can share the a
 - After running the application, if there is any problem to listen the song, please cross check [`ffmpeg`](https://www.ffmpeg.org/) is installed properly or not.
 
 ## Note
-- For better use, please choose smaller songs. So far I have tested with .mp3. .ogg audio formats.
+- For better use, please choose smaller songs. So far I have tested with .mp3, .ogg audio formats.
 - At the start, it may take some time for tuning. But once tuned in, songs will be played smoothly.
