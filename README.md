@@ -38,10 +38,10 @@ After configuring the playlist and running the application, user can share the a
   ```
     $ ./tunein
   ```
-- You can specify your port using -b option :
+- You can specify your port using -p option :
 
   ```
-    $ ./tunein -b 4000
+    $ ./tunein -p 4000
   ```
 
 
