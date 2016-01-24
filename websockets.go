@@ -36,7 +36,7 @@ func (w *Websockets) Write(buff []byte) {
 		remoteAddr := wsElem.conn.RemoteAddr().String()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%d :: Error Sending music data to %s[ErrCount:%d]: %s\n", i, remoteAddr, wsElem.errCount, err.Error())
-			//wsElem.ch <- remoteAddr + ":" + err.Error()
+			wsElem.ch <- remoteAddr + ":" + err.Error()
 			l.Remove(e)
 		}
 	}
@@ -50,7 +50,7 @@ func (w *Websockets) WriteText(cntrl_msg ControlMsg) {
 		remoteAddr := wsElem.conn.RemoteAddr().String()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error Sending text data to %s[ErrCount:%d]: %s\n", remoteAddr, wsElem.errCount, err.Error())
-			//wsElem.ch <- remoteAddr + ":" + err.Error()
+			wsElem.ch <- remoteAddr + ":" + err.Error()
 			l.Remove(e)
 		}
 	}
