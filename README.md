@@ -16,18 +16,32 @@ After configuring the playlist and running the application, user can share the a
 
 
 ## Installation
-- Install `ffmpeg` using the [link](https://www.ffmpeg.org/)
+- Install [`ffmpeg`](https://www.ffmpeg.org/)
+
+  for Mac, you can use
+
+  ```
+  brew install ffmpeg
+  ```
+- Install golang websocket package
+
+  ```
+  go get golang.org/x/net/websocket
+  ```
 - Build the project using :
+
   ```
     $ go build
   ```
 - Run the project (using default port 8080) :
+
   ```
-    $ tunein
+    $ ./tunein
   ```
 - You can specify your port using -b option :
+
   ```
-    $tunein -b 4000
+    $ ./tunein -b 4000
   ```
 
 
