@@ -3,9 +3,8 @@ Tunein is a personalized radio station where user can listen to his/her favorite
 
 After configuring the playlist and running the application, user can share the application link to his/her friends to listen to his/her radio channel.
 
-![](https://github.com/gophergala2016/tunein/blob/master/scsreenshots/Tuning.png)
-
-![](https://github.com/gophergala2016/tunein/blob/master/scsreenshots/Playing.png)
+![Tuning-image](https://github.com/gophergala2016/tunein/blob/master/scsreenshots/Tuning.png "Tuning")
+![Playing-image](https://github.com/gophergala2016/tunein/blob/master/scsreenshots/Playing.png "Playing")
 
 
 ## Idea
